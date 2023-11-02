@@ -1,17 +1,15 @@
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Random;
 
 public class FlipGrid {
     private ArrayList<ArrayList<String> > playGrid = new ArrayList<ArrayList<String>> ();
     private ArrayList<ArrayList<String> > selectGrid = new ArrayList<ArrayList<String>> ();
 
-    int gridLength;
-    int gridWidth;
+    private int gridLength;
+    private int gridWidth;
 
-    boolean randomMode;
+    private boolean randomMode;
 
-    int turnsLeft;
+    private int turnsLeft;
 
     FlipGrid(int length, int width, boolean random) {
 
@@ -108,6 +106,35 @@ public class FlipGrid {
         }
 
         return parsedLength;
+    }
+
+    public void makeMove(String playerSelection) {
+        int selectedX = getXInput(playerSelection);
+        int selectedY = getYInput(playerSelection);
+
+        for (int i = -1; i <= 1; i++) {
+            if (selectedY + i < 0 || selectedY + i >= gridLength) {
+                continue;
+            }
+            for (int f = -1; f <= 1; f++) {
+                if (selectedX + f < 0 || selectedX + f >= gridWidth) {
+                    continue;
+                }
+
+                if (randomMode) {
+                    if (!selectGrid.get(i+1).get(f+1).equals("X")) {
+                        continue;
+                    }
+                }
+
+                if (playGrid.get(selectedY + i).get(selectedX+f).equals("X")) {
+                    playGrid.get(selectedY + i).set(selectedX+f, "O");
+                } else if (playGrid.get(selectedY + i).get(selectedX+f).equals("O")) {
+                    playGrid.get(selectedY + i).set(selectedX+f, "X");
+                }
+
+            }
+        }
     }
 
     public String toString() {
