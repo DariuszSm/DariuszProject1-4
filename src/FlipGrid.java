@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 
 public class FlipGrid {
+
+    private final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
     private ArrayList<ArrayList<String> > playGrid = new ArrayList<ArrayList<String>> ();
     private ArrayList<ArrayList<String> > selectGrid = new ArrayList<ArrayList<String>> ();
 
@@ -54,6 +57,19 @@ public class FlipGrid {
                 playGrid.get(i).add("O");
             }
         }
+
+        for (int i = 0; i < turnsLeft; i++) {
+            makeMove(randomMove());
+        }
+
+    }
+
+    private String randomMove() {
+
+        int randomWidth = (int)(Math.random() * gridWidth);
+        int randomLength = (int)(Math.random() * gridLength) + 1;
+
+        return "" + ALPHABET.charAt(randomWidth) + randomLength;
     }
 
     /**
@@ -95,7 +111,7 @@ public class FlipGrid {
     private int getYInput(String input) {
         int parsedLength;
 
-        parsedLength = Integer.parseInt(input.substring(1));
+        parsedLength = Integer.parseInt(input.substring(1) ) - 1;
 
         if (parsedLength < 0) {
             parsedLength = 0;
@@ -138,11 +154,20 @@ public class FlipGrid {
     }
 
     public String toString() {
-        String finalString = "";
+        String finalString = "  ";
+
+        for (int i = 0; i < gridWidth; i++) {
+            finalString += ALPHABET.charAt(i) + " ";
+        }
+
+        finalString += "\n";
 
         for (int i = 0; i < gridLength; i++) {
+
+            finalString += i + 1 + "|";
+
             for (int f = 0; f < gridWidth; f++) {
-                finalString += playGrid.get(i).get(f);
+                finalString += playGrid.get(i).get(f) + " ";
             }
             finalString += "\n";
         }
@@ -150,7 +175,7 @@ public class FlipGrid {
         if (randomMode) {
             for (int i = 0; i < 3; i++) {
                 for (int f = 0; f < 3; f++) {
-                    finalString += selectGrid.get(i).get(f);
+                    finalString += selectGrid.get(i).get(f) + " ";
                 }
                 finalString += "\n";
             }
