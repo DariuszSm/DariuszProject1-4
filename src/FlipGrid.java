@@ -18,10 +18,21 @@ public class FlipGrid {
 
         int randomSel;
 
+        if (length > 26) {
+            length = 26;
+        } else if (length < 2) {
+            length = 2;
+        }
+        if (width > 26) {
+            width = 26;
+        } else if (width < 2) {
+            width = 2;
+        }
+
         gridLength = length;
         gridWidth = width;
         randomMode = random;
-        turnsLeft = (int)Math.sqrt(length * width);
+        turnsLeft = (int)Math.sqrt(Math.pow(length * width, 1.3));
 
         if (random) {
 
@@ -38,15 +49,15 @@ public class FlipGrid {
                     if ((int)(Math.random() * 2) == 0) {
                         selectGrid.get(i).add("O");
                     } else {
-                        selectGrid.get(i).add("X");
+                        selectGrid.get(i).add(".");
                     }
                 }
             }
 
             // set the middle of the selection grid to an X
-            selectGrid.get(1).set(1, "X");
+            selectGrid.get(1).set(1, ".");
 
-            selectGrid.get(randomSel/3).set(randomSel % 3, "X");
+            selectGrid.get(randomSel/3).set(randomSel % 3, ".");
 
         }
 
@@ -58,7 +69,7 @@ public class FlipGrid {
             }
         }
 
-        for (int i = 0; i < turnsLeft; i++) {
+        for (int i = 0; i < (int)(turnsLeft * .75); i++) {
             makeMove(randomMove());
         }
 
@@ -74,7 +85,7 @@ public class FlipGrid {
 
     /**
      * Parses the player input to get the X value of their selection.
-     * Player format should look like "A5", "H12", "z20", etc
+     * Player format should look like "A5", "H12", "20z", etc
      * Max allowed width is 25, or the width of the grid, whichever is lower
      *
      * @param input Raw player input
@@ -86,7 +97,17 @@ public class FlipGrid {
         int parsedWidth;
 
         input = input.toLowerCase();
-        firstChar = String.valueOf(input.charAt(0));
+
+        /*
+         * Test for if the input is in the last or first character of the array,
+         * and extract the correct character from the input accordingly
+         */
+        try {
+            Integer.parseInt(String.valueOf(input.charAt(0)));
+            firstChar = String.valueOf(input.charAt(input.length()-1));
+        } catch (Exception NumberFormatException) {
+            firstChar = String.valueOf(input.charAt(0));
+        }
         parsedWidth = firstChar.compareTo("a");
 
         if (parsedWidth < 0) {
@@ -111,7 +132,11 @@ public class FlipGrid {
     private int getYInput(String input) {
         int parsedLength;
 
-        parsedLength = Integer.parseInt(input.substring(1) ) - 1;
+        try {
+            parsedLength = Integer.parseInt(input.substring(1)) - 1;
+        } catch (Exception NumberFormatException) {
+            parsedLength = Integer.parseInt(input.substring(0, input.length()-1)) - 1;
+        }
 
         if (parsedLength < 0) {
             parsedLength = 0;
@@ -138,23 +163,53 @@ public class FlipGrid {
                 }
 
                 if (randomMode) {
-                    if (!selectGrid.get(i+1).get(f+1).equals("X")) {
+                    if (!selectGrid.get(i+1).get(f+1).equals(".")) {
                         continue;
                     }
                 }
 
-                if (playGrid.get(selectedY + i).get(selectedX+f).equals("X")) {
+                if (playGrid.get(selectedY + i).get(selectedX+f).equals(".")) {
                     playGrid.get(selectedY + i).set(selectedX+f, "O");
                 } else if (playGrid.get(selectedY + i).get(selectedX+f).equals("O")) {
-                    playGrid.get(selectedY + i).set(selectedX+f, "X");
+                    playGrid.get(selectedY + i).set(selectedX+f, ".");
                 }
 
             }
         }
     }
 
+    public void makePlayerMove(String playerSelection) {
+        makeMove(playerSelection);
+        turnsLeft--;
+    }
+
+    public int getTurnsLeft() {
+        return turnsLeft;
+    }
+
+    public boolean isGameWon() {
+
+        for (int i = 0; i < gridLength; i++) {
+            for (int f = 0; f < gridWidth; f++) {
+                if (playGrid.get(i).get(f).equals(".")) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public String toString() {
-        String finalString = "  ";
+        String finalString = "";
+
+        finalString += "Turns left: " + turnsLeft + "\n";
+
+        finalString += "  ";
+
+        if (gridLength > 9) {
+            finalString += " ";
+        }
 
         for (int i = 0; i < gridWidth; i++) {
             finalString += ALPHABET.charAt(i) + " ";
@@ -163,6 +218,10 @@ public class FlipGrid {
         finalString += "\n";
 
         for (int i = 0; i < gridLength; i++) {
+
+            if (gridLength > 9 && i < 9) {
+                finalString += " ";
+            }
 
             finalString += i + 1 + "|";
 
