@@ -33,6 +33,9 @@ public class FlipGrid {
         gridWidth = width;
         randomMode = random;
         turnsLeft = (int)Math.sqrt(Math.pow(length * width, 1.3));
+        if ((turnsLeft % 2) == 1) {
+            turnsLeft++;
+        }
 
         if (random) {
 
@@ -203,7 +206,35 @@ public class FlipGrid {
     public String toString() {
         String finalString = "";
 
-        finalString += "Turns left: " + turnsLeft + "\n";
+        if (randomMode) {
+
+            // pre grid drawing
+
+            finalString += "Random selection area:\n ";
+
+            for (int i = 0; i < 5; i++) finalString += "-";
+
+            finalString += "\n";
+
+            // grid drawing
+            for (int i = 0; i < 3; i++) {
+                finalString += "|";
+                for (int f = 0; f < 3; f++) {
+                    finalString += selectGrid.get(i).get(f) + " ";
+                }
+
+                // cut the last character of the string so that the right edge of the grid border isn't offset
+                finalString = finalString.substring(0, finalString.length()-1);
+                finalString += "|\n";
+
+            }
+
+            // post grid drawing
+            finalString += " ";
+            for (int f = 0; f < 5; f++) finalString += "-";
+
+            finalString += "\n";
+        }
 
         finalString += "  ";
 
@@ -211,6 +242,7 @@ public class FlipGrid {
             finalString += " ";
         }
 
+        // draw letter associated with column
         for (int i = 0; i < gridWidth; i++) {
             finalString += ALPHABET.charAt(i) + " ";
         }
@@ -231,14 +263,7 @@ public class FlipGrid {
             finalString += "\n";
         }
 
-        if (randomMode) {
-            for (int i = 0; i < 3; i++) {
-                for (int f = 0; f < 3; f++) {
-                    finalString += selectGrid.get(i).get(f) + " ";
-                }
-                finalString += "\n";
-            }
-        }
+        finalString += "\nTurns left: " + turnsLeft + "\n";
 
         return finalString;
     }

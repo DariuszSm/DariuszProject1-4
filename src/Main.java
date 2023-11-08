@@ -12,15 +12,25 @@ public class Main {
 
         Scanner s = new Scanner(System.in);
 
-        System.out.println("Enter the grid length: ");
-        gridLength = Integer.parseInt(s.nextLine());
-        System.out.println("Enter the grid width: ");
+        System.out.println("Welcome to Tile Flipper (name pending)!\n");
+        System.out.println("The goal of the game is to flip all of the tiles of the grid to (O)!");
+        System.out.println("Every time you select a tile to flip, all of the other tiles surrounding it will flip too!\n");
+        System.out.println("To flip a tile, type the:\nLetter of the column +\nThe number of the row\nof the tile you want to flip.");
+        System.out.println("Examples of valid moves: D4, 4b, 7X, f0, etc.\n");
+        System.out.println("Here's an extra challenge:\nYou may also play in random mode, which at the start of the game,\nwill randomly pick which surrounding tiles will flip around your selection.\n");
+
+
+        System.out.print("Enter the grid width (Try 5 if playing for the first time): ");
         gridWidth = Integer.parseInt(s.nextLine());
-        System.out.println("Do you want random a selection area? (Y/N): ");
+        System.out.print("Enter the grid length (Try 5 if playing for the first time): ");
+        gridLength = Integer.parseInt(s.nextLine());
+        System.out.print("Do you want to enable random mode? (Try N if playing for the first time) (Y/N): ");
         input = s.nextLine();
         if (input.equalsIgnoreCase("y")) {
             randomMode = true;
         }
+
+        System.out.println();
 
         FlipGrid f = new FlipGrid(gridLength, gridWidth, randomMode);
         System.out.println(f);
@@ -33,7 +43,7 @@ public class Main {
                 System.out.println("You won!");
                 gameRunning = false;
             } else if (f.getTurnsLeft() < 1) {
-                System.out.println("You lost!");
+                System.out.println("You ran out of turns!");
                 gameRunning = false;
             }
         }
