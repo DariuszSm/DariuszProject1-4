@@ -19,7 +19,7 @@ public class Main {
         System.out.println("Examples of valid moves: D4, 4b, 7X, f0, etc.\n");
         System.out.println("Here's an extra challenge:\nYou may also play in random mode, which at the start of the game,\nwill randomly pick which surrounding tiles will flip around your selection.\n");
 
-
+        // gather grid customizations
         System.out.print("Enter the grid width (Try 5 if playing for the first time): ");
         gridWidth = Integer.parseInt(s.nextLine());
         System.out.print("Enter the grid length (Try 5 if playing for the first time): ");
@@ -35,6 +35,7 @@ public class Main {
         FlipGrid f = new FlipGrid(gridLength, gridWidth, randomMode);
         System.out.println(f);
 
+        // main loop
         while (gameRunning) {
             input = s.nextLine();
             f.makePlayerMove(input);

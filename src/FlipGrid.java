@@ -24,7 +24,7 @@ public class FlipGrid {
      * @param width Width of the grid for the game (amount of columns)
      * @param random Determines if random mode is enabled or not.
      */
-    FlipGrid(int length, int width, boolean random) {
+    public FlipGrid(int length, int width, boolean random) {
 
         // alter the parameters passed in so that they never exceed the maximum or minimum values for the grid
         if (length > maxLength) {
@@ -116,10 +116,9 @@ public class FlipGrid {
 
         input = input.toLowerCase();
 
-        /*
-         * Test for if the input is in the last or first character of the array,
-         * and extract the correct character from the input accordingly
-         */
+
+        // Test for if the input is in the last or first character of the array,
+        // and extract the correct character from the input accordingly
         try {
             // This first line will force the catch segment to run if the first letter of the input is not an integer.
             Integer.parseInt(String.valueOf(input.charAt(0)));
@@ -150,10 +149,8 @@ public class FlipGrid {
     private int getYInput(String input) {
         int parsedLength;
 
-        /*
-         * Test for if the input is in the last or first character of the array,
-         * and extract the correct character from the input accordingly
-         */
+
+         // Test for if the input is in the last or first character of the array, and extract the correct character from the input accordingly
         try {
             // This first line will force the catch segment to run if the first letter of the input is not an integer.
             parsedLength = Integer.parseInt(input.substring(1)) - 1;
@@ -300,7 +297,9 @@ public class FlipGrid {
             finalString += "\n";
         }
 
-        finalString += "\nTurns left: " + turnsLeft + "\n";
+        if (!isGameWon()) {
+            finalString += "\nTurns left: " + turnsLeft + "\n";
+        }
 
         return finalString;
     }
