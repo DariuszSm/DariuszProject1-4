@@ -3,6 +3,10 @@ import java.util.ArrayList;
 public class FlipGrid {
 
     private final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final int maxWidth = 26;
+    private final int maxLength = 26;
+    private final int minWidth = 2;
+    private final int minLength = 2;
 
     private ArrayList<ArrayList<String> > playGrid = new ArrayList<ArrayList<String>> ();
     private ArrayList<ArrayList<String> > selectGrid = new ArrayList<ArrayList<String>> ();
@@ -14,33 +18,40 @@ public class FlipGrid {
 
     private int turnsLeft;
 
+    /**
+     * Generate grids based on length and width, and generates a random selection grid if random mode is enabled.
+     * @param length Length of the grid for the game (amount of rows)
+     * @param width Width of the grid for the game (amount of columns)
+     * @param random Determines if random mode is enabled or not.
+     */
     FlipGrid(int length, int width, boolean random) {
 
-        int randomSel;
-
-        if (length > 26) {
-            length = 26;
-        } else if (length < 2) {
-            length = 2;
+        // alter the parameters passed in so that they never exceed the maximum or minimum values for the grid
+        if (length > maxLength) {
+            length = maxLength;
+        } else if (length < minLength) {
+            length = minLength;
         }
-        if (width > 26) {
-            width = 26;
-        } else if (width < 2) {
-            width = 2;
+        if (width > maxWidth) {
+            width = maxWidth;
+        } else if (width < minWidth) {
+            width = minWidth;
         }
 
         gridLength = length;
         gridWidth = width;
         randomMode = random;
+
         turnsLeft = (int)Math.sqrt(Math.pow(length * width, 1.3));
+        // make moves even
         if ((turnsLeft % 2) == 1) {
             turnsLeft++;
         }
 
+        // generate the random selection grid if random mode is enabled
         if (random) {
-
             // generate one random tile to be selected when random mode is selected.
-            randomSel = (int)(Math.random() * 8);
+            int randomSel = (int)(Math.random() * 8);
             if (randomSel > 4) {
                 randomSel++;
             }
@@ -57,9 +68,8 @@ public class FlipGrid {
                 }
             }
 
-            // set the middle of the selection grid to an X
+            // set the middle of the selection grid to a .
             selectGrid.get(1).set(1, ".");
-
             selectGrid.get(randomSel/3).set(randomSel % 3, ".");
 
         }
@@ -72,12 +82,17 @@ public class FlipGrid {
             }
         }
 
-        for (int i = 0; i < (int)(turnsLeft * .75); i++) {
+        // directly make moves onto the grid based on the amount of turns the player has to solve the grid
+        for (int i = 0; i < (int)(turnsLeft * .75) + turnsLeft % 2; i++) {
             makeMove(randomMove());
         }
 
     }
 
+    /**
+     * Generate a String that can be used as a valid move for makeMove.
+     * @return A string with the format A11, where a letter represents the width, and the number as the length.
+     */
     private String randomMove() {
 
         int randomWidth = (int)(Math.random() * gridWidth);
@@ -106,6 +121,7 @@ public class FlipGrid {
          * and extract the correct character from the input accordingly
          */
         try {
+            // This first line will force the catch segment to run if the first letter of the input is not an integer.
             Integer.parseInt(String.valueOf(input.charAt(0)));
             firstChar = String.valueOf(input.charAt(input.length()-1));
         } catch (Exception NumberFormatException) {
@@ -113,12 +129,11 @@ public class FlipGrid {
         }
         parsedWidth = firstChar.compareTo("a");
 
+        // limit the value range to only include numbers between 0 and the maximum width of the grid
         if (parsedWidth < 0) {
             parsedWidth = 0;
         } else if (parsedWidth > gridWidth - 1) {
             parsedWidth = gridWidth - 1;
-        } else if (parsedWidth > 25) {
-            parsedWidth = 25;
         }
 
         return parsedWidth;
@@ -135,24 +150,33 @@ public class FlipGrid {
     private int getYInput(String input) {
         int parsedLength;
 
+        /*
+         * Test for if the input is in the last or first character of the array,
+         * and extract the correct character from the input accordingly
+         */
         try {
+            // This first line will force the catch segment to run if the first letter of the input is not an integer.
             parsedLength = Integer.parseInt(input.substring(1)) - 1;
         } catch (Exception NumberFormatException) {
+            // This line will force the program to close if anything other than a number is leading the last number of the input.
             parsedLength = Integer.parseInt(input.substring(0, input.length()-1)) - 1;
         }
 
+        // limit the value range to only include numbers between 0 and the maximum length of the grid
         if (parsedLength < 0) {
             parsedLength = 0;
         } else if (parsedLength > gridLength - 1) {
             parsedLength = gridLength - 1;
-        } else if (parsedLength > 25) {
-            parsedLength = 25;
         }
 
         return parsedLength;
     }
 
-    public void makeMove(String playerSelection) {
+    /**
+     * Makes a move on the grid held within the class the function is called in.
+     * @param playerSelection The input that represents where on the grid the move takes place in.
+     */
+    private void makeMove(String playerSelection) {
         int selectedX = getXInput(playerSelection);
         int selectedY = getYInput(playerSelection);
 
@@ -181,15 +205,26 @@ public class FlipGrid {
         }
     }
 
+    /**
+     * Calls makeMove, then decrements the turns left.
+     * @param playerSelection
+     */
     public void makePlayerMove(String playerSelection) {
         makeMove(playerSelection);
         turnsLeft--;
     }
 
+    /**
+     * @return The amount of turns left within the game that the class contains.
+     */
     public int getTurnsLeft() {
         return turnsLeft;
     }
 
+    /**
+     * Checks if the game is in a completed, won state (all O tiles).
+     * @return If the game is in a won state, return true, otherwise, return false.
+     */
     public boolean isGameWon() {
 
         for (int i = 0; i < gridLength; i++) {
@@ -203,17 +238,19 @@ public class FlipGrid {
         return true;
     }
 
+    /**
+     * Produces a String designed to display information about the current state of the game the player is playing.
+     * @return A String displaying the play grid, the amount of turns left, and the random selection grid if random mode is active.
+     */
     public String toString() {
         String finalString = "";
 
+        // random selection grid drawing
         if (randomMode) {
-
-            // pre grid drawing
-
             finalString += "Random selection area:\n ";
 
+            // border drawing
             for (int i = 0; i < 5; i++) finalString += "-";
-
             finalString += "\n";
 
             // grid drawing
@@ -229,15 +266,15 @@ public class FlipGrid {
 
             }
 
-            // post grid drawing
+            // post grid border drawing
             finalString += " ";
             for (int f = 0; f < 5; f++) finalString += "-";
 
             finalString += "\n";
         }
 
+        // letter alignment
         finalString += "  ";
-
         if (gridLength > 9) {
             finalString += " ";
         }
@@ -246,15 +283,15 @@ public class FlipGrid {
         for (int i = 0; i < gridWidth; i++) {
             finalString += ALPHABET.charAt(i) + " ";
         }
-
         finalString += "\n";
 
         for (int i = 0; i < gridLength; i++) {
-
+            // add an extra space to align numbers with single digit counts to rows with higher digit counts
             if (gridLength > 9 && i < 9) {
                 finalString += " ";
             }
 
+            // border between number and rest of grid
             finalString += i + 1 + "|";
 
             for (int f = 0; f < gridWidth; f++) {
