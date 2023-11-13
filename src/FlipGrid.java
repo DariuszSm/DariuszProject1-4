@@ -8,8 +8,9 @@ public class FlipGrid {
     private final int minWidth = 2;
     private final int minLength = 2;
 
-    private ArrayList<ArrayList<String> > playGrid = new ArrayList<ArrayList<String>> ();
-    private ArrayList<ArrayList<String> > selectGrid = new ArrayList<ArrayList<String>> ();
+    private ArrayList<ArrayList<String>> playGrid = new ArrayList<ArrayList<String>>();
+    private ArrayList<ArrayList<String>> previousGrid = new ArrayList<ArrayList<String>>();
+    private ArrayList<ArrayList<String>> selectGrid = new ArrayList<ArrayList<String>>();
 
     private int gridLength;
     private int gridWidth;
@@ -82,9 +83,27 @@ public class FlipGrid {
             }
         }
 
+        // generate starting layout for the grid
+        for (int i = 0; i < length; i++) {
+            previousGrid.add(new ArrayList<String>());;
+            for (int f = 0; f < width; f++) {
+                previousGrid.get(i).add("O");
+            }
+        }
+        System.out.println("PASS");
+
         // directly make moves onto the grid based on the amount of turns the player has to solve the grid
         for (int i = 0; i < (int)(turnsLeft * .75) + turnsLeft % 2; i++) {
             makeMove(randomMove());
+        }
+
+
+
+        // set previous grid to the play grid
+        for (int i = 0; i < length; i++) {
+            for (int f = 0; f < width; f++) {
+                previousGrid.get(i).set(f, playGrid.get(i).get(f));
+            }
         }
 
     }
@@ -170,10 +189,26 @@ public class FlipGrid {
     }
 
     /**
+     * Updates the previousGrid grid to the current play grid.
+     */
+    private void updatePrevGrid() {
+        // set previous grid to the play grid
+        for (int i = 0; i < gridLength; i++) {
+            for (int f = 0; f < gridWidth; f++) {
+                previousGrid.get(i).set(f, playGrid.get(i).get(f));
+            }
+        }
+    }
+
+    /**
      * Makes a move on the grid held within the class the function is called in.
      * @param playerSelection The input that represents where on the grid the move takes place in.
      */
     private void makeMove(String playerSelection) {
+
+        // first order of action so that the grids are always different between moves
+        updatePrevGrid();
+
         int selectedX = getXInput(playerSelection);
         int selectedY = getYInput(playerSelection);
 
@@ -200,11 +235,15 @@ public class FlipGrid {
 
             }
         }
+
+        System.out.println(previousGrid);
+        System.out.println(playGrid);
+        System.out.println();
     }
 
     /**
      * Calls makeMove, then decrements the turns left.
-     * @param playerSelection
+     * @param playerSelection the String the player uses to make the move, formatted 5A, I23, 9Z, etc.
      */
     public void makePlayerMove(String playerSelection) {
         makeMove(playerSelection);
@@ -292,7 +331,17 @@ public class FlipGrid {
             finalString += i + 1 + "|";
 
             for (int f = 0; f < gridWidth; f++) {
+                if (!selectGrid.get(i).get(f).equals(previousGrid.get(i).get(f))) {
+                    // ANSI_GREEN code
+                    finalString += "\u001B[32m";
+                } else {
+                    // ANSI_RESET code
+                    finalString += "\u001B[0m";
+                }
                 finalString += playGrid.get(i).get(f) + " ";
+
+                finalString += "\u001B[0m";
+
             }
             finalString += "\n";
         }
