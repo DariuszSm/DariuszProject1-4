@@ -90,7 +90,6 @@ public class FlipGrid {
                 previousGrid.get(i).add("O");
             }
         }
-        System.out.println("PASS");
 
         // directly make moves onto the grid based on the amount of turns the player has to solve the grid
         for (int i = 0; i < (int)(turnsLeft * .75) + turnsLeft % 2; i++) {
@@ -235,10 +234,6 @@ public class FlipGrid {
 
             }
         }
-
-        System.out.println(previousGrid);
-        System.out.println(playGrid);
-        System.out.println();
     }
 
     /**
@@ -292,9 +287,16 @@ public class FlipGrid {
             // grid drawing
             for (int i = 0; i < 3; i++) {
                 finalString += "|";
+
+                // Add the ANSI_GREEN character code to make the following characters green
+                finalString += "\u001B[32m";
+
                 for (int f = 0; f < 3; f++) {
                     finalString += selectGrid.get(i).get(f) + " ";
                 }
+
+                // Add the reset code to return the color and format of the string back to normal
+                finalString += "\u001B[0m";
 
                 // cut the last character of the string so that the right edge of the grid border isn't offset
                 finalString = finalString.substring(0, finalString.length()-1);
@@ -331,7 +333,7 @@ public class FlipGrid {
             finalString += i + 1 + "|";
 
             for (int f = 0; f < gridWidth; f++) {
-                if (!selectGrid.get(i).get(f).equals(previousGrid.get(i).get(f))) {
+                if (!playGrid.get(i).get(f).equals(previousGrid.get(i).get(f))) {
                     // ANSI_GREEN code
                     finalString += "\u001B[32m";
                 } else {
