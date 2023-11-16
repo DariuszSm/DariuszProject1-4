@@ -100,14 +100,16 @@ public class FlipGrid {
 
             // check if any of the previous moves match with the one just made
             for (int f = 0; f < moveTrack.size()-1; f++) {
-                if (f != 0 && moveTrack.get(f).equals(moveTrack.get(moveTrack.size()-1))) {
+                if (moveTrack.get(f).equals(moveTrack.get(moveTrack.size()-1))) {
                     moveTrack.set(moveTrack.size()-1, randomMove());
-                    f--;
+                    f -= 1;
                 }
             }
-            makeMove(moveTrack.get(moveTrack.size()-1));
         }
-        System.out.println(moveTrack);
+
+        for (int i = 0; i < moveTrack.size(); i++) {
+            makeMove(moveTrack.get(i));
+        }
 
 
         // set previous grid to the play grid
