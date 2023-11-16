@@ -20,9 +20,9 @@ public class Main {
         System.out.println("Here's an extra challenge:\nYou may also play in random mode, which at the start of the game,\nwill randomly pick which surrounding tiles will flip around your selection.\n");
 
         // gather grid customizations
-        System.out.print("Enter the grid width (Try 5 if playing for the first time): ");
+        System.out.print("Enter the grid width (Try 4 if playing for the first time): ");
         gridWidth = Integer.parseInt(s.nextLine());
-        System.out.print("Enter the grid length (Try 5 if playing for the first time): ");
+        System.out.print("Enter the grid length (Try 4 if playing for the first time): ");
         gridLength = Integer.parseInt(s.nextLine());
         System.out.print("Do you want to enable random mode? (Try N if playing for the first time) (Y/N): ");
         input = s.nextLine();

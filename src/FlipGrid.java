@@ -91,11 +91,23 @@ public class FlipGrid {
             }
         }
 
+        // used to track all previous moves done to the grid during generation
+        ArrayList<String> moveTrack = new ArrayList<String>();
+
         // directly make moves onto the grid based on the amount of turns the player has to solve the grid
         for (int i = 0; i < (int)(turnsLeft * .75) + turnsLeft % 2; i++) {
-            makeMove(randomMove());
-        }
+            moveTrack.add(randomMove());
 
+            // check if any of the previous moves match with the one just made
+            for (int f = 0; f < moveTrack.size()-1; f++) {
+                if (f != 0 && moveTrack.get(f).equals(moveTrack.get(moveTrack.size()-1))) {
+                    moveTrack.set(moveTrack.size()-1, randomMove());
+                    f--;
+                }
+            }
+            makeMove(moveTrack.get(moveTrack.size()-1));
+        }
+        System.out.println(moveTrack);
 
 
         // set previous grid to the play grid
@@ -289,7 +301,7 @@ public class FlipGrid {
                 finalString += "|";
 
                 // Add the ANSI_GREEN character code to make the following characters green
-                finalString += "\u001B[32m";
+                finalString += "\u001B[36m";
 
                 for (int f = 0; f < 3; f++) {
                     finalString += selectGrid.get(i).get(f) + " ";
@@ -335,7 +347,7 @@ public class FlipGrid {
             for (int f = 0; f < gridWidth; f++) {
                 if (!playGrid.get(i).get(f).equals(previousGrid.get(i).get(f))) {
                     // ANSI_GREEN code
-                    finalString += "\u001B[32m";
+                    finalString += "\u001B[36m";
                 } else {
                     // ANSI_RESET code
                     finalString += "\u001B[0m";
