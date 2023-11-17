@@ -5,8 +5,8 @@ public class FlipGrid {
     private final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private final int maxWidth = 26;
     private final int maxLength = 26;
-    private final int minWidth = 2;
-    private final int minLength = 2;
+    private final int minWidth = 1;
+    private final int minLength = 1;
 
     private ArrayList<ArrayList<String>> playGrid = new ArrayList<ArrayList<String>>();
     private ArrayList<ArrayList<String>> previousGrid = new ArrayList<ArrayList<String>>();
@@ -43,7 +43,7 @@ public class FlipGrid {
         gridWidth = width;
         randomMode = random;
 
-        turnsLeft = (int)Math.sqrt(Math.pow(length * width, 1.3));
+        turnsLeft = (int)Math.sqrt(Math.pow(length * width, 1.4));
         // make moves even
         if ((turnsLeft % 2) == 1) {
             turnsLeft++;
@@ -96,7 +96,7 @@ public class FlipGrid {
 
         // directly make moves onto the grid based on the amount of turns the player has to solve the grid
         for (int i = 0; i < (int)(turnsLeft * .75) + turnsLeft % 2; i++) {
-            moveTrack.add(randomMove());
+            moveTrack.add("f3");
 
             // check if any of the previous moves match with the one just made
             for (int f = 0; f < moveTrack.size()-1; f++) {
@@ -135,7 +135,7 @@ public class FlipGrid {
 
     /**
      * Parses the player input to get the X value of their selection.
-     * Player format should look like "A5", "H12", "20z", etc
+     * Player format should look like "A5", "H12", "20z", etc.
      * Max allowed width is 25, or the width of the grid, whichever is lower
      *
      * @param input Raw player input
@@ -156,7 +156,12 @@ public class FlipGrid {
             Integer.parseInt(String.valueOf(input.charAt(0)));
             firstChar = String.valueOf(input.charAt(input.length()-1));
         } catch (Exception NumberFormatException) {
-            firstChar = String.valueOf(input.charAt(0));
+            // final check for if the value is valid, if it is not (which should mean that the input was improperly formatted), then return a value that shouldn't work on any grid.
+            try {
+                firstChar = String.valueOf(input.charAt(0));
+            } catch (Exception invalid) {
+                return -32;
+            }
         }
         parsedWidth = firstChar.compareTo("a");
 
@@ -187,8 +192,12 @@ public class FlipGrid {
             // This first line will force the catch segment to run if the first letter of the input is not an integer.
             parsedLength = Integer.parseInt(input.substring(1)) - 1;
         } catch (Exception NumberFormatException) {
-            // This line will force the program to close if anything other than a number is leading the last number of the input.
-            parsedLength = Integer.parseInt(input.substring(0, input.length()-1)) - 1;
+            // final check for if the value is valid, if it is not (which should mean that the input was improperly formatted), then return a value that shouldn't work on any grid.
+            try {
+                parsedLength = Integer.parseInt(input.substring(0, input.length() - 1)) - 1;
+            } catch (Exception invalid) {
+                return -32;
+            }
         }
 
         // limit the value range to only include numbers between 0 and the maximum length of the grid
@@ -199,6 +208,15 @@ public class FlipGrid {
         }
 
         return parsedLength;
+    }
+
+    /**
+     * Returns validity of a String if it were to be used as a move.
+     * @param moveStr String to validate
+     * @return Validity state of the given String
+     */
+    public boolean isMoveValid(String moveStr) {
+        return (getXInput(moveStr) != -32) && (getYInput(moveStr) != -32);
     }
 
     /**
@@ -302,21 +320,28 @@ public class FlipGrid {
             for (int i = 0; i < 3; i++) {
                 finalString += "|";
 
-                // Add the ANSI_GREEN character code to make the following characters green
-                finalString += "\u001B[36m";
-
                 for (int f = 0; f < 3; f++) {
+
+                    // Add the ANSI_BLUE character code to make the following characters blue
+                    if (selectGrid.get(i).get(f).equals(".")) {
+                        finalString += "\u001B[36m";
+                    }
+
                     finalString += selectGrid.get(i).get(f) + " ";
                 }
+
+                // cut the last character of the string so that the right edge of the grid border isn't offset
+                finalString = finalString.substring(0, finalString.length()-1);
 
                 // Add the reset code to return the color and format of the string back to normal
                 finalString += "\u001B[0m";
 
-                // cut the last character of the string so that the right edge of the grid border isn't offset
-                finalString = finalString.substring(0, finalString.length()-1);
                 finalString += "|\n";
 
             }
+
+            // Add the reset code to return the color and format of the string back to normal
+            finalString += "\u001B[0m";
 
             // post grid border drawing
             finalString += " ";
@@ -348,7 +373,7 @@ public class FlipGrid {
 
             for (int f = 0; f < gridWidth; f++) {
                 if (!playGrid.get(i).get(f).equals(previousGrid.get(i).get(f))) {
-                    // ANSI_GREEN code
+                    // ANSI_BLUE code
                     finalString += "\u001B[36m";
                 } else {
                     // ANSI_RESET code
