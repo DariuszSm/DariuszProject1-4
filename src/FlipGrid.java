@@ -96,7 +96,7 @@ public class FlipGrid {
 
         // directly make moves onto the grid based on the amount of turns the player has to solve the grid
         for (int i = 0; i < (int)(turnsLeft * .75) + turnsLeft % 2; i++) {
-            moveTrack.add("f3");
+            moveTrack.add(randomMove());
 
             // check if any of the previous moves match with the one just made
             for (int f = 0; f < moveTrack.size()-1; f++) {
